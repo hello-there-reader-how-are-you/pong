@@ -6,7 +6,6 @@ import math
 WIDTH = 800 
 HIEGHT = 600
 
-
 pane = GraphWin("pong", WIDTH, HIEGHT, autoflush=False)
 pane.setBackground("white")
 
@@ -14,7 +13,7 @@ vid_buff = []
 
 
 class bumper:
-    def __init__(self, p1, p2, color="blue"):
+    def __init__(self, p1, p2, color="orange"):
         self.obj = Rectangle(Point(p1[0], p1[1]), Point(p2[0], p2[1]))
         self.obj.setFill(color)
         self.obj.setOutline(color)
@@ -54,10 +53,10 @@ class ball:
         self.obj.draw(pane)
 
     def move(self):
-        win_coll(self)
-        if self.speed != 0:
+        coll(self, wall)
+        for i in range(self.speed):
             self.obj.undraw()
-            self.obj.move(self.speed*math.cos(math.radians(self.dir)), -self.speed*math.sin(math.radians(self.dir)))
+            self.obj.move(math.cos(math.radians(self.dir)), -math.sin(math.radians(self.dir)))
         
     def x1(self):
         return self.obj.getP1().getX()
@@ -84,14 +83,30 @@ def coll(a, b):
         a.dir = a.dir - 90
 """
 
-def win_coll(a):
-    if a.x1() <= 0 or a.x2() >= WIDTH:
-        a.dir = 180 - a.dir
-    if a.y1() <= 0 or a.y2() >= HIEGHT:
-        a.dir = 360 - a.dir
+
     
+def coll(a, b):
+    x_flag = False
+    y_flag = False
+    if a.x1() <= 0 or a.x2() >= WIDTH:
+        x_flag = True
+    if a.y1() <= 0 or a.y2() >= HIEGHT:
+        y_flag = True
+
+    if ((b.x1() <= a.x1() <= b.x2()) and ((b.y1() <= a.y1() <= b.y2()))):
+        x_flag = True
+
+
+    if x_flag:
+        a.dir = 180 - a.dir
+    if y_flag:
+        a.dir = 360 - a.dir
+
+
 
 #wall = bumper((700, 0), (800, 600))
+wall = bumper((250, 275), (400, 425))
+
 orb = ball((50, 500), (75, 525))
 orb.speed = 10
 orb.dir = 70
