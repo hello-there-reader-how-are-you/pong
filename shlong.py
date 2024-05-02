@@ -13,7 +13,6 @@ pane.setBackground("white")
 vid_buff = []
 
 
-
 class bumper:
     def __init__(self, p1, p2, color="blue"):
         self.obj = Rectangle(Point(p1[0], p1[1]), Point(p2[0], p2[1]))
@@ -55,6 +54,7 @@ class ball:
         self.obj.draw(pane)
 
     def move(self):
+        win_coll(self)
         if self.speed != 0:
             self.obj.undraw()
             self.obj.move(self.speed*math.cos(math.radians(self.dir)), -self.speed*math.sin(math.radians(self.dir)))
@@ -85,14 +85,11 @@ def coll(a, b):
 """
 
 def win_coll(a):
-    if a.x1() < 0 or a.x2() > WIDTH:
-        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        a.dir = a.dir - 270
-    if a.y1() < 0 or a.y2() > HIEGHT:
-        a.dir = a.dir - 270
-        print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+    if a.x1() <= 0 or a.x2() >= WIDTH:
+        a.dir = 180 - a.dir
+    if a.y1() <= 0 or a.y2() >= HIEGHT:
+        a.dir = 360 - a.dir
     
-
 
 #wall = bumper((700, 0), (800, 600))
 orb = ball((50, 500), (75, 525))
@@ -102,7 +99,6 @@ ref()
 
 i = 0
 while True:
-    win_coll(orb)
     orb.move()
     ref()
     print(i)
