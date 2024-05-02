@@ -73,18 +73,8 @@ def ref():
         vid_buff[i].draw()
     update()
 
-"""
-def coll(a, b):
-    #check if a collides with b
-    #def corners: Top left = (x1, y1) Top Right = (x2, y1), bottem left = (x1, y2) bottem right = (x2, y2)
-    if b.x1() < a.x1() < b.x2() or b.x1() < a.x2() < b.x2():
-        a.dir = a.dir - 270
-    if b.y1() < a.x1() < b.y2() or b.y1() < a.x2() < b.y2():
-        a.dir = a.dir - 90
-"""
 
 
-    
 def coll(a, b):
     x_flag = False
     y_flag = False
@@ -93,15 +83,22 @@ def coll(a, b):
     if a.y1() <= 0 or a.y2() >= HIEGHT:
         y_flag = True
 
-    if ((b.x1() <= a.x1() <= b.x2()) and ((b.y1() <= a.y1() <= b.y2()))):
+    A = ((b.x1() <= a.x1() <= b.x2()) and (b.y1() <= a.y1() <= b.y2()))    #a.x1(), a.y1()        
+    B = ((b.x1() <= a.x2() <= b.x2()) and (b.y1() <= a.y1() <= b.y2()))    #a.x2(), a.y1()
+    C = ((b.x1() <= a.x1() <= b.x2()) and (b.y1() <= a.y2() <= b.y2()))    #a.x1(), a.y2()   
+    D = ((b.x1() <= a.x2() <= b.x2()) and (b.y1() <= a.y2() <= b.y2()))    #a.x2(), a.y2()
+
+    if((A and C) or (B and D)):
         x_flag = True
+
+    if((A and B) or (C and D)):
+        y_flag = True
 
 
     if x_flag:
         a.dir = 180 - a.dir
     if y_flag:
         a.dir = 360 - a.dir
-
 
 
 #wall = bumper((700, 0), (800, 600))
