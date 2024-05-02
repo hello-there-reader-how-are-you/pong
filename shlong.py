@@ -53,8 +53,8 @@ class ball:
         self.obj.draw(pane)
 
     def move(self):
-        coll(self, wall)
         for i in range(self.speed):
+            coll(self, wall)
             self.obj.undraw()
             self.obj.move(math.cos(math.radians(self.dir)), -math.sin(math.radians(self.dir)))
         
