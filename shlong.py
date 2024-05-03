@@ -72,7 +72,6 @@ def ref():
     fps()
 
 def fps():
-    # goal: name the window the fps value, smooth fps
     global cref
     global start_time
     if len(cref) > 5000:
