@@ -2,6 +2,7 @@
 import time
 from graphics import *
 import math
+import numpy as np
 
 WIDTH = 800 
 HIEGHT = 600
@@ -10,6 +11,9 @@ pane = GraphWin("pong", WIDTH, HIEGHT, autoflush=False)
 pane.setBackground("white")
 
 vid_buff = []
+start_time = time.time()
+cref = np.array([])
+
 
 class bumper:
     def __init__(self, p1, p2, speed=0, dir=0, steps=1, color="orange"):
@@ -60,9 +64,23 @@ class ball:
 
 
 def ref():
+    global cref
     for i in range(len(vid_buff)):
         vid_buff[i].draw()
     update()
+    cref = np.append(cref, time.time())
+    fps()
+
+def fps():
+    # goal: name the window the fps value, smooth fps
+    global cref
+    global start_time
+    if len(cref) > 5000:
+        cref = np.delete(cref, 0)
+    if (time.time() - start_time) >= 1:
+        pane.master.title(f"Pong. FPS: {round((1 / np.average(np.diff(cref))))}")
+
+
 
 def move(a):
     for i in range(a.steps):
@@ -133,14 +151,13 @@ orb = ball((280, 500), (305, 525), speed=0.5, dir=60)
 
 ref()
 
-i = 0
+
+
 while True:
     #print(f"({pane.getMouse().getX()}, {pane.getMouse().getY()})")
     move(orb)
     ref()
-    print(i)
-    time.sleep(0.00005)
-    i += 1
+    time.sleep(0.0005)
 
 
 
@@ -150,3 +167,9 @@ while True:
 #print(f"({pane.getMouse().getX()}, {pane.getMouse().getY()}), ({pane.getMouse().getX()}, {pane.getMouse().getY()})")
 pane.getMouse()
 pane.close()
+
+
+def dump(obj):
+  for attr in dir(obj):
+    print("obj.%s = %r" % (attr, getattr(obj, attr)))
+dump(pane)
