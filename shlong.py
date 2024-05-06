@@ -3,6 +3,7 @@ import time
 from graphics import *
 import math
 import numpy as np
+import keyboard
 
 WIDTH = 800 
 HIEGHT = 600
@@ -15,8 +16,10 @@ start_time = time.time()
 cref = np.array([])
 none_count = 0
 
+score = [0, 0]
+
 class bumper:
-    def __init__(self, p1, p2, speed=0, dir=270, steps=1, color="orange"):
+    def __init__(self, p1, p2, speed=0, dir=270, steps=1, keybinds=["Up", "Down", "Left", "Right"], color="orange"):
         self.obj = Rectangle(Point(p1[0], p1[1]), Point(p2[0], p2[1]))
         self.obj.setFill(color)
         self.obj.setOutline(color)
@@ -24,6 +27,7 @@ class bumper:
         self.speed = speed
         self.dir = dir
         self.steps = steps
+        self.keybinds = keybinds
 
     def draw(self):
         self.obj.undraw()
@@ -64,14 +68,15 @@ class ball:
 
 
 
-
 def ref():
     global cref
     for i in range(len(vid_buff)):
         vid_buff[i].draw()
     update()
     cref = np.append(cref, time.time())
-    fps()
+    pane.master.title(f"Pong. Score: {score[1]} to {score[0]}, FPS: {fps()}")
+
+    
 
 def fps():
     global cref
@@ -79,7 +84,21 @@ def fps():
     if len(cref) > 5000:
         cref = np.delete(cref, 0)
     if (time.time() - start_time) >= 1:
-        pane.master.title(f"Pong. FPS: {round((1 / np.average(np.diff(cref))))}")
+        return round((1 / np.average(np.diff(cref))))
+    else: return "N/A"
+        
+def score_board(a):
+    global score
+    old_score = score.copy()
+    if a.x1() <= 0:
+        score[0] += 1
+    if a.x2() >= 800:
+        score[1] += 1
+    if score != old_score:
+        print(score)
+    return score
+        
+
 
 def move(a):
     if type(a) == bumper:
@@ -95,8 +114,6 @@ def move(a):
             a.obj.undraw()
             a.obj.move(a.speed*math.cos(math.radians(a.dir)), -a.speed*math.sin(math.radians(a.dir)))
         
-
-
 
 def coll(a):
     vid_ripp = vid_buff.copy()
@@ -151,38 +168,38 @@ def coll(a):
         a.dir = 360 - a.dir
 
 
-bwall = bumper((700, 0), (800, 600))
-wall = bumper((250, 275), (400, 425))
+def shin(a):
+    if keyboard.is_pressed(a.keybinds[0]):
+        a.dir = 90
+        move(a)
+    if keyboard.is_pressed(a.keybinds[1]):
+        a.dir = 270
+        move(a)
 
-rp = bumper((20, 180), (50, 360), color="blue", speed=5, steps=5)
+
+
+
+
+#bwall = bumper((700, 0), (800, 600))
+#wall = bumper((250, 275), (400, 425))
+
+lp = bumper((20, 180), (50, 360), color="blue", speed=0.5, steps=1, keybinds=['w', 's'])
+rp = bumper((750, 180), (780, 360), color="red", speed=0.5, steps=1, keybinds=['Up', 'Down'])
+
 
 orb = ball(center=(155.0, 450.0), r=25, speed=0.5, dir=40, color=color_rgb(0, 204, 0))
 
-
-
-"""
-def shin(a):
-    key = pane.lastKey
-    global frame_num
-    if key == "Up":
-        a.dir = 90
-        move(a)
-    elif key == "Down":
-        a.dir = 270
-        move(a)
-    print(key)
-    if frame_num % 2 == 0:
-        pane.lastKey = ""
-    """
 
 
 
 frame_num = 0
 while True:
     #print(f"({pane.getMouse().getX()}, {pane.getMouse().getY()})")
-    #shin(rp)
+    shin(lp)
+    shin(rp)
     move(orb)
     ref()
+    score_board(orb)
     time.sleep(0.0005)
     frame_num += 1
 
